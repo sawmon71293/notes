@@ -28,17 +28,19 @@ export const useAuthStore = defineStore("auth", {
     },
 
     setToken(token: string) {
+      this.token = useCookie('auth-token', {
+        path: '/',
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+        secure: true, // set to false on localhost if needed
+        sameSite: 'strict'
+      })
       this.token = token;
-      if (import.meta.client) {
-        localStorage.setItem("token", token);
-      }
     },
 
     clearAuth() {
       this.user = null;
       this.token = null;
       this.isAuthenticated = false;
-      localStorage.removeItem("token");
     },
 
     async login(email: string, password: string) {
@@ -66,7 +68,6 @@ export const useAuthStore = defineStore("auth", {
           method: "POST",
           body: { name, email, password },
         });
-        console.log(response);
         // Automatically log in the user after successful signup
         this.setToken(response.token);
         this.setUser(response.user);
@@ -83,7 +84,7 @@ export const useAuthStore = defineStore("auth", {
       const config = useRuntimeConfig();
       const baseUrl = config.public.apiBase;
       try {
-        const token = localStorage.getItem("token");
+        const token = useCookie('auth-token')
         if (!token) return;
         await $fetch(`${baseUrl}/logout`, {
           method: "POST",
@@ -93,17 +94,18 @@ export const useAuthStore = defineStore("auth", {
         });
       } finally {
         this.clearAuth();
-        await navigateTo("/");
+        await navigateTo("/login");
       }
     },
 
     async checkAuth() {
       const config = useRuntimeConfig();
       const baseUrl = config.public.apiBase;
+      
       try {
-        const token = localStorage.getItem("token");
+        
+        const token = useCookie('auth-token').value
         if (!token) return false;
-
         const response = await $fetch(`${baseUrl}/api/auth/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
