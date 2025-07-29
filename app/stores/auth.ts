@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { useNuxtApp } from '#app';
 
 interface User {
   id: string
@@ -29,8 +30,10 @@ export const useAuthStore = defineStore('auth', {
 
     setToken(token: string) {
       this.token = token
-      // Store token in localStorage for persistence
-      localStorage.setItem('token', token)
+      const nuxtApp = useNuxtApp ()
+      if (!nuxtApp.ssrContext) {
+        localStorage.setItem('token', token)
+      }
     },
 
     clearAuth() {
@@ -42,11 +45,12 @@ export const useAuthStore = defineStore('auth', {
 
     async login(email: string, password: string) {
       try {
-        const response = await $fetch('/api/auth/login', {
+        const response = await $fetch('https://localhost:7055/api/auth/login', {
           method: 'POST',
           body: { email, password }
         })
-
+        console.log ("token,", response.token)
+        console.log (response.user);
         this.setToken(response.token)
         this.setUser(response.user)
         return true
@@ -58,11 +62,11 @@ export const useAuthStore = defineStore('auth', {
 
     async signup(name: string, email: string, password: string) {
         try {
-          const response = await $fetch('/api/auth/signup', {
+          const response = await $fetch('https://localhost:7055/api/auth/register', {
             method: 'POST',
             body: { name, email, password }
           })
-
+          console.log (response)
           // Automatically log in the user after successful signup
           this.setToken(response.token)
           this.setUser(response.user)
@@ -79,7 +83,7 @@ export const useAuthStore = defineStore('auth', {
       try {
         const token = localStorage.getItem('token')
         if (!token) return
-        await $fetch('/api/auth/logout', {
+        await $fetch('https://localhost:7055/logout', {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${token}`
