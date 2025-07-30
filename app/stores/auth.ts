@@ -1,0 +1,130 @@
+import { defineStore } from "pinia";
+
+interface User {
+  id: string;
+  email: string;
+  name: string;
+}
+
+interface AuthState {
+  user: User | null;
+  token: string | null;
+  isAuthenticated: boolean;
+  loading: boolean;
+}
+
+export const useAuthStore = defineStore("auth", {
+  state: (): AuthState => ({
+    user: null,
+    token: null,
+    isAuthenticated: false,
+    loading: true,
+  }),
+
+  actions: {
+    setUser(user: User) {
+      this.user = user;
+      this.isAuthenticated = true;
+    },
+
+    setToken(token: string) {
+      this.token = useCookie('auth-token', {
+        path: '/',
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+        secure: true, // set to false on localhost if needed
+        sameSite: 'strict'
+      })
+      this.token = token;
+    },
+
+    clearAuth() {
+      this.user = null;
+      this.token = null;
+      this.isAuthenticated = false;
+    },
+
+    async login(email: string, password: string) {
+      const config = useRuntimeConfig();
+      const baseUrl = config.public.apiBase;
+      try {
+        const response = await $fetch(`${baseUrl}/api/auth/login`, {
+          method: "POST",
+          body: { email, password },
+        });
+        this.setToken(response.token);
+        this.setUser(response.user);
+        return true;
+      } catch (error) {
+        console.error("Login error:", error);
+        return false;
+      }
+    },
+
+    async signup(name: string, email: string, password: string) {
+      const config = useRuntimeConfig();
+      const baseUrl = config.public.apiBase;
+      try {
+        const response = await $fetch(`${baseUrl}/api/auth/register`, {
+          method: "POST",
+          body: { name, email, password },
+        });
+        // Automatically log in the user after successful signup
+        this.setToken(response.token);
+        this.setUser(response.user);
+        return { success: true };
+      } catch (error: any) {
+        return {
+          success: false,
+          error: error.data?.message || "Signup failed",
+        };
+      }
+    },
+
+    async logout() {
+      const config = useRuntimeConfig();
+      const baseUrl = config.public.apiBase;
+      try {
+        const token = useCookie('auth-token')
+        if (!token) return;
+        await $fetch(`${baseUrl}/logout`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      } finally {
+        this.clearAuth();
+        await navigateTo("/login");
+      }
+    },
+
+    async checkAuth() {
+      const config = useRuntimeConfig();
+      const baseUrl = config.public.apiBase;
+      
+      try {
+        
+        const token = useCookie('auth-token').value
+        if (!token) return false;
+        const response = await $fetch(`${baseUrl}/api/auth/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        this.setToken(token);
+        this.setUser(response.user);
+        return true;
+      } catch {
+        this.clearAuth();
+        return false;
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
+});
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useAuthStore, import.meta.hot));
+}
