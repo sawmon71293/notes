@@ -1,7 +1,6 @@
 <template>
   <div>
     <div>
-      <i class="mdi mdi-magnify"></i>
       <input type="text" placeholder="Search User" class="ps-2 sm:w-full md:w-[60%] lg:w-[30%] rounded-xl border border-gray-300 p-2 m-2">
     </div>
     <table class="w-full table-auto border-collapse mt-2">
