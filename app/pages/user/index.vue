@@ -1,8 +1,5 @@
 <template>
   <div>
-    <div>
-      <input type="text" placeholder="Search User" class="ps-2 sm:w-full md:w-[60%] lg:w-[30%] rounded-xl border border-gray-300 p-2 m-2">
-    </div>
     <table class="w-full table-auto border-collapse mt-2">
       <thead
         class="bg-gray-300 sm:table-header-group hidden sm:table-header-group"

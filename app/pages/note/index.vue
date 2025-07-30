@@ -1,20 +1,32 @@
 <template>
   <div>
-    <div class="flex w-full items-center justify-center m-2">
-      <div>
+    <div class="flex w-full items-center flex-col md:flex-row px-4">
+      <div class="flex relative w-full items-center justify-center">
         <NuxtLink to="/note/create">
           <Icon name="mdi:plus-circle" class="text-gray-400 cursor-pointer" />
         </NuxtLink>
-      </div>
-      <div class="flex relative w-full">
         <Icon
           name="mdi:magnify"
-          class="absolute top-4 left-4 w-20 h-20 text-gray-400"
+          class="absolute top-4 left-16 w-20 h-20 text-gray-400"
         />
         <input
           type="text"
-          placeholder="Search Note"
-          class="px-8 sm:w-full md:w-[60%] lg:w-[30%] rounded-xl border border-gray-300 p-2 m-2"
+          v-model="query"
+          placeholder="Search Notes..."
+          class="px-8 rounded-xl border border-gray-300 p-2 m-2"
+          @input="fetchNotes"
+        />
+      </div>
+      <div class="w-full flex">
+        <select v-model="sortBy" @change="fetchNotes" class="flex w-full">
+          <option value="">Sort By</option>
+          <option value="Title">Title</option>
+          <option value="CreatedBy">Date</option>
+        </select>
+        <Icon
+          :name="descending ? 'mdi:sort-descending' : 'mdi:sort-ascending'"
+          class="text-gray-400 cursor-pointer ms-2"
+          @click="sort"
         />
       </div>
     </div>
@@ -111,6 +123,31 @@ const noteList = ref([]);
 const token = useCookie("auth-token").value;
 const showConfirm = ref(false);
 const updatingId = ref("");
+
+const query = ref("");
+const sortBy = ref("");
+const descending = ref(false);
+const fetchNotes = async () => {
+  console.log("fetch notes were called", sortBy.value);
+  console.log("fetch note was called", descending.value);
+  noteList.value = await $fetch(`${baseUrl}/api/notes`, {
+    params: {
+      query: query.value,
+      orderBy: sortBy.value,
+      descending: descending.value,
+    },
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const sort = () => {
+  descending.value = !descending.value;
+  fetchNotes();
+};
+
 onMounted(async () => {
   const token = useCookie("auth-token").value;
   const ok = await authStore.checkAuth();
