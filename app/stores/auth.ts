@@ -28,12 +28,12 @@ export const useAuthStore = defineStore("auth", {
     },
 
     setToken(token: string) {
-      this.token = useCookie('auth-token', {
-        path: '/',
+      this.token = useCookie("auth-token", {
+        path: "/",
         maxAge: 60 * 60 * 24 * 7, // 7 days
         secure: true, // set to false on localhost if needed
-        sameSite: 'strict'
-      })
+        sameSite: "strict",
+      });
       this.token = token;
     },
 
@@ -81,30 +81,16 @@ export const useAuthStore = defineStore("auth", {
     },
 
     async logout() {
-      const config = useRuntimeConfig();
-      const baseUrl = config.public.apiBase;
-      try {
-        const token = useCookie('auth-token')
-        if (!token) return;
-        await $fetch(`${baseUrl}/logout`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-      } finally {
-        this.clearAuth();
-        await navigateTo("/login");
-      }
+      this.clearAuth();
+      await navigateTo("/");
     },
 
     async checkAuth() {
       const config = useRuntimeConfig();
       const baseUrl = config.public.apiBase;
-      
+
       try {
-        
-        const token = useCookie('auth-token').value
+        const token = useCookie("auth-token").value;
         if (!token) return false;
         const response = await $fetch(`${baseUrl}/api/auth/me`, {
           headers: {
