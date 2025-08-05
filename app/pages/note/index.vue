@@ -1,27 +1,33 @@
 <template>
   <div>
     <div class="flex w-full items-center flex-col md:flex-row px-4">
-      <div class="flex relative w-full items-center justify-center">
+      <div class="flex items-center justify-left">
         <NuxtLink to="/note/create">
           <Icon name="mdi:plus-circle" class="text-gray-400 cursor-pointer" />
         </NuxtLink>
-        <Icon
-          name="mdi:magnify"
-          class="absolute top-4 left-16 w-20 h-20 text-gray-400"
-        />
-        <input
-          type="text"
-          v-model="query"
-          placeholder="Search Notes..."
-          class="px-8 rounded-xl border border-gray-300 p-2 m-2"
-          @input="fetchNotes"
-        />
+        <div class="relative">
+          <Icon
+            name="mdi:magnify"
+            class="absolute top-4 left-4 w-20 h-20 text-gray-400"
+          />
+          <input
+            type="text"
+            v-model="query"
+            placeholder="Search Notes..."
+            class="px-8 rounded-xl border border-gray-300 p-2 m-2"
+            @input="fetchNotes"
+          />
+        </div>
       </div>
-      <div class="w-full flex">
-        <select v-model="sortBy" @change="fetchNotes" class="flex w-full">
+      <div class="w-40 flex items-center">
+        <select
+          v-model="sortBy"
+          @change="fetchNotes"
+          class="flex w-full border border-gray-300 p-2 rounded-xl px-2"
+        >
           <option value="">Sort By</option>
           <option value="Title">Title</option>
-          <option value="CreatedBy">Date</option>
+          <option value="CreatedAt">Date</option>
         </select>
         <Icon
           :name="descending ? 'mdi:sort-descending' : 'mdi:sort-ascending'"
@@ -128,12 +134,11 @@ const query = ref("");
 const sortBy = ref("");
 const descending = ref(false);
 const fetchNotes = async () => {
-  console.log("fetch notes were called", sortBy.value);
-  console.log("fetch note was called", descending.value);
+  console.log(sortBy.value);
   noteList.value = await $fetch(`${baseUrl}/api/notes`, {
     params: {
       query: query.value,
-      orderBy: sortBy.value,
+      sortBy: sortBy.value,
       descending: descending.value,
     },
     method: "GET",
