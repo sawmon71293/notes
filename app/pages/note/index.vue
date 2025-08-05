@@ -119,6 +119,9 @@
   </div>
 </template>
 <script setup>
+definePageMeta({
+  middleware: "protected",
+});
 const authStore = useAuthStore();
 const snackbar = useSnackbarStore();
 const loginUser = authStore.user;
@@ -155,10 +158,7 @@ const sort = () => {
 
 onMounted(async () => {
   const token = useCookie("auth-token").value;
-  const ok = await authStore.checkAuth();
-  if (!token || !ok) {
-    return navigateTo("/login");
-  }
+
   try {
     noteList.value = await $fetch(`${baseUrl}/api/note`, {
       method: "GET",

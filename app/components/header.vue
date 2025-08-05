@@ -11,7 +11,7 @@
           </NuxtLink>
         </div>
         <div v-else>
-          <NuxtLink to="/login" class="text-blue-500 hover:text-blue-600 me-4">
+          <NuxtLink to="/" class="text-blue-500 hover:text-blue-600 me-4">
             Login
           </NuxtLink>
           <NuxtLink to="/signup" class="text-blue-500 hover:text-blue-600">
@@ -37,5 +37,4 @@
 <script setup>
 import { useAuthStore } from "~/stores/auth";
 const authStore = useAuthStore();
-console.log(authStore.isAuthenticated);
 </script>
