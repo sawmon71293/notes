@@ -28,6 +28,9 @@
 </template>
 <script setup lang="ts">
 import { useAuthStore } from "~/stores/auth";
+definePageMeta({
+  middleware: "protected",
+});
 const authStore = useAuthStore();
 const loginUser = authStore.user;
 const config = useRuntimeConfig();
@@ -37,7 +40,7 @@ onMounted(async () => {
   const token = useCookie("auth-token").value;
   const ok = await authStore.checkAuth();
   if (!token || !ok) {
-    return navigateTo("/login");
+    return navigateTo("/");
   }
   try {
     userList.value = await $fetch(`${baseUrl}/api/user`, {
