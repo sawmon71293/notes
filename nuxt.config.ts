@@ -2,18 +2,16 @@
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
-  compatibilityDate: '2025-07-15',
+  compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
-  css: ['~/assets/css/main.css'],
-  modules: ['@pinia/nuxt','@nuxt/icon'],
+  css: ["~/assets/css/main.css"],
+  modules: ["@pinia/nuxt", "@nuxt/icon"],
   vite: {
-    plugins: [
-      tailwindcss(),
-    ],
+    plugins: [tailwindcss()],
   },
-   runtimeConfig: {
+  runtimeConfig: {
     public: {
-      apiBase: process.env.API_BASE || 'https://localhost:7055'
-    }
-  }
-})
+      apiBase: process.env.API_BASE || " http://localhost:5006",
+    },
+  },
+});

@@ -8,7 +8,7 @@ interface User {
 
 interface AuthState {
   user: User | null;
-  token: string | null;
+  token: string | null | undefined;
   isAuthenticated: boolean;
   loading: boolean;
 }
@@ -28,13 +28,14 @@ export const useAuthStore = defineStore("auth", {
     },
 
     setToken(token: string) {
-      this.token = useCookie("auth-token", {
+      const cookie = useCookie("auth-token", {
         path: "/",
         maxAge: 60 * 60 * 24 * 7, // 7 days
         secure: true, // set to false on localhost if needed
         sameSite: "strict",
       });
-      this.token = token;
+      cookie.value = token;
+      this.token = cookie;
     },
 
     clearAuth() {
@@ -91,13 +92,14 @@ export const useAuthStore = defineStore("auth", {
 
       try {
         const token = useCookie("auth-token").value;
+        console.log("token in the cookie__", token);
         if (!token) return false;
         const response = await $fetch(`${baseUrl}/api/auth/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-
+        console.log("token is ", token);
         this.setToken(token);
         this.setUser(response.user);
         return true;
