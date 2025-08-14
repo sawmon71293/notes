@@ -14,5 +14,6 @@ export default defineEventHandler(async (event) => {
     event.context.authUser = response.user;
   } catch (error) {
     console.log(error);
+    deleteCookie(event, "auth-token");
   }
 });

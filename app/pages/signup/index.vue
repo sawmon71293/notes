@@ -1,6 +1,9 @@
 <template>
   <div class="w-full lg:w-[40%] mx-auto">
-    <form @submit.prevent="handleSubmit" class="w-full p-4 h-screen flex flex-col items-center justify-center gap-2">
+    <form
+      @submit.prevent="handleSubmit"
+      class="w-full p-4 h-screen flex flex-col items-center justify-center gap-2"
+    >
       <div class="w-full">
         <label class="block mb-2">Name</label>
         <input
@@ -9,7 +12,7 @@
           required
           class="w-full px-3 py-2 border rounded"
           :class="{ 'border-red-500': errors.name }"
-        >
+        />
         <p v-if="errors.name" class="text-red-500 text-sm mt-1">
           {{ errors.name }}
         </p>
@@ -22,7 +25,7 @@
           required
           class="w-full px-3 py-2 border rounded"
           :class="{ 'border-red-500': errors.email }"
-        >
+        />
         <p v-if="errors.email" class="text-red-500 text-sm mt-1">
           {{ errors.email }}
         </p>
@@ -35,7 +38,7 @@
           required
           class="w-full px-3 py-2 border rounded"
           :class="{ 'border-red-500': errors.password }"
-        >
+        />
         <p v-if="errors.password" class="text-red-500 text-sm mt-1">
           {{ errors.password }}
         </p>
@@ -48,7 +51,7 @@
           required
           class="w-full px-3 py-2 border rounded"
           :class="{ 'border-red-500': errors.confirmPassword }"
-        >
+        />
         <p v-if="errors.confirmPassword" class="text-red-500 text-sm mt-1">
           {{ errors.confirmPassword }}
         </p>
@@ -58,7 +61,7 @@
         class="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
         :disabled="loading"
       >
-        {{ loading ? 'Creating account...' : 'Sign Up' }}
+        {{ loading ? "Creating account..." : "Sign Up" }}
       </button>
       <p v-if="error" class="mt-4 text-red-500 text-center">
         {{ error }}
@@ -75,80 +78,82 @@
 
 <script setup lang="ts">
 definePageMeta({
-  layout: false
-})
-const authStore = useAuthStore()
-const router = useRouter()
+  layout: false,
+});
+const authStore = useAuthStore();
+const router = useRouter();
 
-const name = ref('')
-const email = ref('')
-const password = ref('')
-const confirmPassword = ref('')
-const loading = ref(false)
-const error = ref('')
+const name = ref("");
+const email = ref("");
+const password = ref("");
+const confirmPassword = ref("");
+const loading = ref(false);
+const error = ref("");
 const errors = reactive({
-  name: '',
-  email: '',
-  password: '',
-  confirmPassword: ''
-})
+  name: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+});
 
 function validateForm() {
-  let isValid = true
+  let isValid = true;
 
   // Reset errors
-  Object.keys(errors).forEach(key => errors[key as keyof typeof errors] = '')
+  Object.keys(errors).forEach(
+    (key) => (errors[key as keyof typeof errors] = "")
+  );
 
   // Name validation
   if (name.value.length < 2) {
-    errors.name = 'Name must be at least 2 characters long'
-    isValid = false
+    errors.name = "Name must be at least 2 characters long";
+    isValid = false;
   }
 
   // Email validation
-  const emailRegex =/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   if (!emailRegex.test(email.value)) {
-    errors.email = 'Please enter a valid email address'
-    isValid = false
+    errors.email = "Please enter a valid email address";
+    isValid = false;
   }
 
   // Password validation
   if (password.value.length < 8) {
-    errors.password = 'Password must be at least 8 characters long'
-    isValid = false
+    errors.password = "Password must be at least 8 characters long";
+    isValid = false;
   }
 
   if (password.value !== confirmPassword.value) {
-    errors.confirmPassword = 'Passwords do not match'
-    isValid = false
+    errors.confirmPassword = "Passwords do not match";
+    isValid = false;
   }
 
-  return isValid
+  return isValid;
 }
 
 async function handleSubmit() {
-  if (!validateForm()) return
+  if (!validateForm()) return;
 
-  loading.value = true
-  error.value = ''
+  loading.value = true;
+  error.value = "";
 
   try {
     const result = await authStore.signup(
       name.value,
       email.value,
       password.value
-    )
+    );
 
     if (result.success) {
-      router.push('/login')
+      router.push("/");
     } else {
-      error.value = result.error
+      error.value = result.error;
     }
   } catch (e) {
-    error.value = 'An unexpected error occurred'
+    error.value = "An unexpected error occurred";
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 </script>
