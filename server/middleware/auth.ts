@@ -11,10 +11,7 @@ export default defineEventHandler(async (event) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log("response in the server auth", response);
     event.context.authUser = response.user;
-    console.log("event", event);
-    console.log("user in the event context", event.context.authUser);
   } catch (error) {
     console.log(error);
   }

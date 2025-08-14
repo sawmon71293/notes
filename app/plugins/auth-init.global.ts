@@ -6,10 +6,6 @@ export default defineNuxtPlugin((nuxtApp) => {
       () => nuxtApp.ssrContext?.event.context.authUser ?? null
     );
 
-    console.log(
-      "User here in the event_____>>>",
-      nuxtApp.ssrContext?.event.context.authUser
-    );
     if (user.value) {
       auth.setUser(user.value);
       auth.isAuthenticated = true;

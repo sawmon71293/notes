@@ -28,11 +28,8 @@
 </template>
 <script setup lang="ts">
 import { useAuthStore } from "~/stores/auth";
-definePageMeta({
-  middleware: "protected",
-});
+
 const authStore = useAuthStore();
-const loginUser = authStore.user;
 const config = useRuntimeConfig();
 const baseUrl = config.public.apiBase;
 const userList = ref([]);

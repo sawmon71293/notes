@@ -5,10 +5,6 @@
 </template>
 
 <script setup lang="ts">
-const authStore = useAuthStore();
-const router = useRouter();
-const snackbar = useSnackbarStore();
-
 definePageMeta({
   middleware: "protected",
 });
