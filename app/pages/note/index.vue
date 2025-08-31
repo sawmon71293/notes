@@ -137,17 +137,13 @@ const query = ref("");
 const sortBy = ref("");
 const descending = ref(false);
 const fetchNotes = async () => {
-  console.log(sortBy.value);
-  noteList.value = await $fetch(`${baseUrl}/api/notes`, {
+  noteList.value = await fetchWithAuth(`${baseUrl}/api/notes`, {
     params: {
       query: query.value,
       sortBy: sortBy.value,
       descending: descending.value,
     },
     method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
   });
 };
 
@@ -157,14 +153,9 @@ const sort = () => {
 };
 
 onMounted(async () => {
-  const token = useCookie("auth-token").value;
-
   try {
-    noteList.value = await $fetch(`${baseUrl}/api/note`, {
+    noteList.value = await fetchWithAuth(`${baseUrl}/api/note`, {
       method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
     });
     console.log(noteList.value);
   } catch (error) {

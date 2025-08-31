@@ -54,6 +54,7 @@ async function handleSubmit() {
 
   try {
     const success = await authStore.login(email.value, password.value);
+    console.log("Login success", success);
     if (success) {
       router.push("/note");
     } else {

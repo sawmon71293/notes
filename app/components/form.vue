@@ -46,18 +46,14 @@ const error = ref("");
 const updatingId = defineProps(["id"]);
 const config = useRuntimeConfig();
 const baseUrl = config.public.apiBase;
-const token = useCookie("auth-token").value;
 async function handleSubmit() {
   loading.value = true;
   error.value = "";
 
   if (!updatingId.id) {
     try {
-      await $fetch(`${baseUrl}/api/note`, {
+      await fetchWithAuth(`${baseUrl}/api/note`, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
         body: {
           title: title.value,
           content: content.value,
@@ -72,11 +68,8 @@ async function handleSubmit() {
     }
   } else {
     try {
-      await $fetch(`${baseUrl}/api/note/${updatingId.id}`, {
+      await fetchWithAuth(`${baseUrl}/api/note/${updatingId.id}`, {
         method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
         body: {
           title: title.value,
           content: content.value,
@@ -94,12 +87,12 @@ async function handleSubmit() {
 
 onMounted(async () => {
   if (updatingId.id) {
-    const updatingNote = await $fetch(`${baseUrl}/api/note/${updatingId.id}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const updatingNote = await fetchWithAuth(
+      `${baseUrl}/api/note/${updatingId.id}`,
+      {
+        method: "GET",
+      }
+    );
     if (updatingNote) {
       title.value = updatingNote.title;
       content.value = updatingNote.content;

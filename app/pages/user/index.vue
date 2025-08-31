@@ -27,27 +27,27 @@
   </div>
 </template>
 <script setup lang="ts">
-import { useAuthStore } from "~/stores/auth";
-
-const authStore = useAuthStore();
+import fetchWithAuth from "~/composables/fetchWithAuth";
+definePageMeta({
+  middleware: "protected",
+});
 const config = useRuntimeConfig();
 const baseUrl = config.public.apiBase;
-const userList = ref([]);
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+const userList = ref<User[]>([]);
 onMounted(async () => {
-  const token = useCookie("auth-token").value;
-  const ok = await authStore.checkAuth();
-  if (!token || !ok) {
-    return navigateTo("/");
-  }
   try {
-    userList.value = await $fetch(`${baseUrl}/api/user`, {
+    const res = await fetchWithAuth(`${baseUrl}/api/user`, {
       method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
     });
+    userList.value = res as User[];
   } catch (error) {
-    console.error("Error fetching notes", error);
+    console.error("Error fetching user", error);
   }
 });
 </script>

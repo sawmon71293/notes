@@ -28,15 +28,19 @@ export const useAuthStore = defineStore("auth", {
     },
 
     setToken(token: string) {
-      const cookie = useCookie("auth-token", {
-        path: "/",
-        maxAge: 60 * 60 * 24 * 7, // 7 days
-        secure: true, // set to false on localhost if needed
-        sameSite: "strict",
-      });
-      cookie.value = token;
-      this.token = cookie;
+      this.token = token;
     },
+
+    // setToken(token: string) {
+    //   const cookie = useCookie("auth-token", {
+    //     path: "/",
+    //     maxAge: 60 * 60 * 24 * 7, // 7 days
+    //     secure: true, // set to false on localhost if needed
+    //     sameSite: "strict",
+    //   });
+    //   cookie.value = token;
+    //   this.token = cookie;
+    // },
 
     clearAuth() {
       this.user = null;
@@ -48,12 +52,13 @@ export const useAuthStore = defineStore("auth", {
       const config = useRuntimeConfig();
       const baseUrl = config.public.apiBase;
       try {
-        const response = await $fetch(`${baseUrl}/api/auth/login`, {
+        const { token, user } = await $fetch(`${baseUrl}/api/auth/login`, {
           method: "POST",
           body: { email, password },
         });
-        this.setToken(response.token);
-        this.setUser(response.user);
+
+        this.setToken(token);
+        this.setUser(user);
         return true;
       } catch (error) {
         console.error("Login error:", error);
@@ -94,12 +99,11 @@ export const useAuthStore = defineStore("auth", {
         const token = useCookie("auth-token").value;
         console.log("token in the cookie__", token);
         if (!token) return false;
-        const response = await $fetch(`${baseUrl}/api/auth/me`, {
+        const response = await $fetch(`${baseUrl}/api/auth/refresh-token`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log("token is ", token);
         this.setToken(token);
         this.setUser(response.user);
         return true;
