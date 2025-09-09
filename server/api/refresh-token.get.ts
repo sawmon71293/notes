@@ -3,7 +3,7 @@ export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
   const baseUrl = config.apiBase;
   try {
-    const res = await $fetch(`http://localhost:5006/auth/refresh-token`, {
+    const res = await $fetch(`https://localhost:7055/auth/refresh-token`, {
       method: "POST",
       credentials: "include",
     });
