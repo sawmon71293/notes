@@ -1,8 +1,6 @@
 export default async function fetchWithAuth(url: string, options = {}) {
   const authStore = useAuthStore();
   let token = authStore.token;
-  console.log("token in the fetch with auth", token);
-  console.log("options header in the fetch with auth", { ...options });
   let res = await $fetch(url, {
     ...options,
     headers: {
@@ -15,7 +13,7 @@ export default async function fetchWithAuth(url: string, options = {}) {
 
   if (res.status === 401) {
     const refreshRes = await $fetch(
-      "https://localhost:5006/api/auth/refresh-token",
+      "https://localhost:7055/api/auth/refresh-token",
       {
         method: "POST",
         credentials: "include",

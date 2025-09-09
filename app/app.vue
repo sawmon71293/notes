@@ -7,5 +7,7 @@
 import useAuth from "./composables/auth-init";
 
 const { initializeAuth } = useAuth();
-await initializeAuth();
+onMounted(async () => {
+  await initializeAuth();
+});
 </script>

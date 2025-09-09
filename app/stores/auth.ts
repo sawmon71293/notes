@@ -49,13 +49,14 @@ export const useAuthStore = defineStore("auth", {
     },
 
     async login(email: string, password: string) {
-      const config = useRuntimeConfig();
-      const baseUrl = config.public.apiBase;
       try {
-        const { token, user } = await $fetch(`${baseUrl}/api/auth/login`, {
-          method: "POST",
-          body: { email, password },
-        });
+        const { token, user } = await $fetch(
+          `http://localhost:5006/api/auth/login`,
+          {
+            method: "POST",
+            body: { email, password },
+          }
+        );
 
         this.setToken(token);
         this.setUser(user);
@@ -70,7 +71,7 @@ export const useAuthStore = defineStore("auth", {
       const config = useRuntimeConfig();
       const baseUrl = config.public.apiBase;
       try {
-        const response = await $fetch(`${baseUrl}/api/auth/register`, {
+        const response = await $fetch(`${baseUrl}/auth/register`, {
           method: "POST",
           body: { name, email, password },
         });
@@ -97,9 +98,8 @@ export const useAuthStore = defineStore("auth", {
 
       try {
         const token = useCookie("auth-token").value;
-        console.log("token in the cookie__", token);
         if (!token) return false;
-        const response = await $fetch(`${baseUrl}/api/auth/refresh-token`, {
+        const response = await $fetch(`${baseUrl}/auth/refresh-token`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

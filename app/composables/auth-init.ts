@@ -1,16 +1,15 @@
 export default function useAuth() {
-  const authStore = useAuthStore();
   async function initializeAuth() {
     try {
-      const config = useRuntimeConfig();
-      const baseUrl = config.public.apiBase;
-      const res = await $fetch(`${baseUrl}/api/auth/refresh-token`, {
+      const res = await $fetch("http://localhost:5006/api/auth/refresh-token", {
         method: "POST",
         credentials: "include",
       });
-      authStore.setToken(res.accessToken);
+      console.log({ res });
+      // authStore.setToken(res.accessToken);
+      // authStore.setUser(res.user);
     } catch (err) {
-      authStore.logout();
+      console.log("auth fetched failed", err);
     }
   }
   return { initializeAuth };

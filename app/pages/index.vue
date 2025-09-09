@@ -61,6 +61,7 @@ async function handleSubmit() {
       error.value = "Invalid credentials";
     }
   } catch (e) {
+    console.log(e);
     error.value = "An error occurred";
   } finally {
     loading.value = false;

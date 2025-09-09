@@ -10,8 +10,9 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
   },
   runtimeConfig: {
+    apiBase: "http://localhost:5006",
     public: {
-      apiBase: process.env.API_BASE || " https://localhost:7055",
+      apiBase: "/api", // frontend always uses /api
     },
   },
 });
