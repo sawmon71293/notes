@@ -6,6 +6,7 @@ export default defineEventHandler(async (event) => {
     const res = await $fetch(`https://localhost:7055/api/auth/refresh-token`, {
       method: "POST",
       credentials: "include",
+      withCredentials: true,
     });
     return res; // return backend response to frontend
   } catch (err) {

@@ -55,6 +55,8 @@ export const useAuthStore = defineStore("auth", {
           {
             method: "POST",
             body: { email, password },
+            withCredentials: true,
+            credentials: "include",
           }
         );
 

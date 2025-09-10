@@ -5,6 +5,7 @@ export default function useAuth() {
         method: "POST",
         credentials: "include",
         mode: "cors",
+        withCredentials: true
       });
       console.log({ res });
       // authStore.setToken(res.accessToken);
