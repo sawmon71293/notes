@@ -31,17 +31,6 @@ export const useAuthStore = defineStore("auth", {
       this.token = token;
     },
 
-    // setToken(token: string) {
-    //   const cookie = useCookie("auth-token", {
-    //     path: "/",
-    //     maxAge: 60 * 60 * 24 * 7, // 7 days
-    //     secure: true, // set to false on localhost if needed
-    //     sameSite: "strict",
-    //   });
-    //   cookie.value = token;
-    //   this.token = cookie;
-    // },
-
     clearAuth() {
       this.user = null;
       this.token = null;
@@ -50,18 +39,17 @@ export const useAuthStore = defineStore("auth", {
 
     async login(email: string, password: string) {
       try {
-        const { token, user } = await $fetch(
+        const { token, user, refreshToken } = await $fetch(
           `https://localhost:7055/api/auth/login`,
           {
             method: "POST",
             body: { email, password },
-            withCredentials: true,
-            credentials: "include",
           }
         );
 
         this.setToken(token);
         this.setUser(user);
+        localStorage.setItem("refreshToken", refreshToken);
         return true;
       } catch (error) {
         console.error("Login error:", error);
@@ -97,17 +85,25 @@ export const useAuthStore = defineStore("auth", {
     async checkAuth() {
       const config = useRuntimeConfig();
       const baseUrl = config.public.apiBase;
+      let refreshToken = null;
+      if (import.meta.client) {
+        refreshToken = localStorage.getItem("refreshToken");
+      }
 
       try {
-        const token = useCookie("auth-token").value;
-        if (!token) return false;
-        const response = await $fetch(`${baseUrl}/auth/refresh-token`, {
+        if (!refreshToken) return false;
+        const response = await $fetch(`${baseUrl}/api/auth/refresh-token`, {
+          method: "POST",
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${refreshToken}`,
           },
         });
-        this.setToken(token);
+        this.setToken(response.token);
         this.setUser(response.user);
+
+        if (import.meta.client) {
+          localStorage.setItem("refreshToken", response.refreshToken);
+        }
         return true;
       } catch {
         this.clearAuth();

@@ -119,9 +119,6 @@
   </div>
 </template>
 <script setup>
-definePageMeta({
-  middleware: "protected",
-});
 const authStore = useAuthStore();
 const snackbar = useSnackbarStore();
 const loginUser = authStore.user;

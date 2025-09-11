@@ -28,9 +28,7 @@
 </template>
 <script setup lang="ts">
 import fetchWithAuth from "~/composables/fetchWithAuth";
-definePageMeta({
-  middleware: "protected",
-});
+
 const config = useRuntimeConfig();
 const baseUrl = config.public.apiBase;
 interface User {

@@ -4,10 +4,8 @@
   </NuxtLayout>
 </template>
 <script setup lang="ts">
-import useAuth from "./composables/auth-init";
-
-const { initializeAuth } = useAuth();
+const { checkAuth } = useAuthStore();
 onMounted(async () => {
-  await initializeAuth();
+  await checkAuth();
 });
 </script>
